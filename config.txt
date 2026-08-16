@@ -1,0 +1,21 @@
+# A-Maze-ing default configuration.
+# One KEY=VALUE per line, lines starting with a # are ignored.
+
+# Size of the maze, in cells.
+WIDTH=20
+HEIGHT=15
+
+# Entry and exit cells, written x,y (0,0 is the top-left cell).
+ENTRY=0,0
+EXIT=19,14
+
+# Where the generated maze is written.
+OUTPUT_FILE=maze.txt
+
+# True  -> one single path between the entry and the exit.
+# False -> a playable Pac-Man board: loops everywhere, no dead-end.
+PERFECT=False
+
+# Optional: seed of the random generator, for a reproducible maze.
+# Comment it out to get a different maze on every run.
+SEED=42
