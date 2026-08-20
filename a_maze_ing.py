@@ -71,15 +71,13 @@ def as_int(config: dict[str, str], key: str) -> int:
 
 def as_cell(config: dict[str, str], key: str) -> Cell:
     """Read `key` as a pair of coordinates written ``x,y``."""
-    parts = config[key].split(",")
     try:
-        if len(parts) != 2:
-            raise ValueError
-        return int(parts[0]), int(parts[1])
+        x, y = [int(part) for part in config[key].split(",")]
     except ValueError as err:
         raise ConfigError(
             f"{key} must be written 'x,y', got {config[key]!r}"
         ) from err
+    return Cell(x, y)
 
 
 def as_bool(config: dict[str, str], key: str) -> bool:
@@ -119,17 +117,18 @@ def main(argv: list[str]) -> int:
     try:
         config = read_config(argv[1])
         maze = build_maze(config)
-        maze.save(config["OUTPUT_FILE"])
     except ConfigError as err:
         print(f"Error: {err}", file=sys.stderr)
         return 1
+    output = config["OUTPUT_FILE"]
+    try:
+        maze.save(output)
     except OSError as err:
-        print(f"Error: cannot write {config['OUTPUT_FILE']}: {err.strerror}",
-              file=sys.stderr)
+        print(f"Error: cannot write {output}: {err.strerror}", file=sys.stderr)
         return 1
     if maze.pattern_error:
         print(f"Error: {maze.pattern_error}", file=sys.stderr)
-    display.run(maze, config["OUTPUT_FILE"])
+    display.run(maze, output)
     return 0
 
 

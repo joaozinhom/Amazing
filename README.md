@@ -66,6 +66,23 @@ their own colour. The menu offers:
 When the standard input is not a terminal (a pipe, a moulinette), the maze is
 drawn once and the program exits instead of waiting for an answer.
 
+A maze is a grid of cells *separated by walls*, so drawing it needs one square
+per cell **and** one square per wall: a `WIDTH x HEIGHT` maze is drawn on a
+canvas of `2 * WIDTH + 1` by `2 * HEIGHT + 1` squares, called blocks.
+
+```
++---+---+           wall  wall  wall  wall  wall
+| a | b |           wall   a    gap    b    wall
++---+---+    ->     wall  wall  wall  wall  wall
+| c   d |           wall   c    gap    d    wall
++---+---+           wall  wall  wall  wall  wall
+```
+
+Each block is first given a name — `wall`, `open`, `pattern`, `path`, `entry` or
+`exit` — and only then printed as two spaces of the colour that name stands for.
+Naming first and colouring last is what keeps the drawing code short: the theme
+is a simple name → colour dictionary.
+
 ## Configuration file
 
 One `KEY=VALUE` pair per line. Lines starting with `#` and blank lines are
@@ -223,6 +240,30 @@ maze.to_hex_rows()              # the wall map, one string per row
 | `config.txt` | Default configuration. |
 | `pyproject.toml`, `setup.cfg` | Package build and linter settings. |
 | `mazegen-1.0.0-py3-none-any.whl` | The reusable module, ready for `pip`. |
+
+### Reading the code
+
+Every step above is one small function, in the order it runs:
+
+| Step | Function |
+| ---- | -------- |
+| Read `KEY=VALUE` lines, check the mandatory keys | `read_config` |
+| Convert one value, or complain | `as_int`, `as_cell`, `as_bool` |
+| Build the maze from the configuration | `build_maze` |
+| Reserve the "42" cells | `MazeGenerator._place_pattern` |
+| Carve the corridors (DFS) | `MazeGenerator._carve` |
+| Remove the dead-ends (braiding) | `MazeGenerator._braid` |
+| Refuse a wall that would open a 3x3 room | `_too_wide`, `_is_room` |
+| Find the shortest path (BFS) | `MazeGenerator.solve` |
+| Write the output file | `MazeGenerator.save` |
+| Name every block of the canvas | `_canvas` and its `_draw_*` helpers |
+| Colour the blocks and print them | `render`, `_paint` |
+| Show the menu and react | `run` |
+
+Only three helpers know about the geometry of the maze, and every other function
+goes through them: `_direction` (which wall stands between two cells),
+`_neighbours` (the cells one may walk to) and `linked` (is that wall open?).
+That is why no bitmask arithmetic is ever written twice.
 
 ## Bonus
 
