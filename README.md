@@ -167,9 +167,13 @@ The shortest path is then found with a **breadth-first search** from the entry.
 ## The reusable module
 
 The whole generation logic is the `MazeGenerator` class of the `mazegen`
-package — a standalone module that knows nothing about the config file, the
-output format or the display. `a_maze_ing.py` only parses the configuration and
-`display.py` only draws; both are throwaway around the module.
+package — a standalone module that knows nothing about the config file or the
+display. The class itself is a thin orchestrator: each step lives in its own
+file (`carve.py`, `braid.py`, `pattern.py`, `analysis.py`, `serialize.py`, over
+the shared `geometry.py` and `board.py`), so the module stays one public class
+split into one-job pieces. The `app/` package is throwaway around it:
+`app/config.py` only parses the configuration and `app/canvas.py` +
+`app/render.py` + `app/menu.py` only draw.
 
 The package is built as `mazegen-1.0.0-py3-none-any.whl`, available at the root
 of the repository and rebuildable with `make package` (or
@@ -234,9 +238,20 @@ maze.to_hex_rows()              # the wall map, one string per row
 
 | File | Role |
 | ---- | ---- |
-| `a_maze_ing.py` | Main program: configuration parsing, error handling, entry point. |
-| `mazegen/__init__.py` | The reusable `MazeGenerator` class and its documentation. |
-| `display.py` | Terminal rendering and interactive menu. |
+| `a_maze_ing.py` | Thin entry point: wires config → maze → save → display. |
+| `app/config.py` | Configuration parsing and error handling. |
+| `app/canvas.py` | Turns a maze into a grid of named blocks. |
+| `app/render.py` | Colours the blocks into terminal lines. |
+| `app/menu.py` | Interactive menu loop. |
+| `mazegen/__init__.py` | Public API of the reusable module and its documentation. |
+| `mazegen/geometry.py` | The vocabulary: cells, walls, moves, the "42". |
+| `mazegen/board.py` | The grid state and the wall primitives. |
+| `mazegen/pattern.py` | Where the "42" pattern lands, or why it cannot. |
+| `mazegen/carve.py` | Carve the corridors (depth-first search). |
+| `mazegen/braid.py` | Remove the dead-ends of a playable board. |
+| `mazegen/analysis.py` | Shortest path, loop and dead-end counts. |
+| `mazegen/serialize.py` | The hexadecimal output format. |
+| `mazegen/generator.py` | `MazeGenerator`, the orchestrator tying it together. |
 | `config.txt` | Default configuration. |
 | `pyproject.toml`, `setup.cfg` | Package build and linter settings. |
 | `mazegen-1.0.0-py3-none-any.whl` | The reusable module, ready for `pip`. |
@@ -247,22 +262,23 @@ Every step above is one small function, in the order it runs:
 
 | Step | Function |
 | ---- | -------- |
-| Read `KEY=VALUE` lines, check the mandatory keys | `read_config` |
-| Convert one value, or complain | `as_int`, `as_cell`, `as_bool` |
-| Build the maze from the configuration | `build_maze` |
-| Reserve the "42" cells | `MazeGenerator._place_pattern` |
-| Carve the corridors (DFS) | `MazeGenerator._carve` |
-| Remove the dead-ends (braiding) | `MazeGenerator._braid` |
-| Refuse a wall that would open a 3x3 room | `_too_wide`, `_is_room` |
-| Find the shortest path (BFS) | `MazeGenerator.solve` |
-| Write the output file | `MazeGenerator.save` |
-| Name every block of the canvas | `_canvas` and its `_draw_*` helpers |
-| Colour the blocks and print them | `render`, `_paint` |
-| Show the menu and react | `run` |
+| Read `KEY=VALUE` lines, check the mandatory keys | `config.read_config` |
+| Convert one value, or complain | `config.as_int`, `as_cell`, `as_bool` |
+| Build the maze from the configuration | `config.build_maze` |
+| Reserve the "42" cells | `pattern.place_pattern` |
+| Carve the corridors (DFS) | `carve.carve` |
+| Remove the dead-ends (braiding) | `braid.braid` |
+| Refuse a wall that would open a 3x3 room | `braid._would_make_room`, `_is_room` |
+| Find the shortest path (BFS) | `analysis.solve` |
+| Write the output file | `serialize.save` (via `MazeGenerator.save`) |
+| Name every block of the canvas | `canvas.build_canvas` and its `_draw_*` helpers |
+| Colour the blocks and print them | `render.render`, `render._paint` |
+| Show the menu and react | `menu.run` |
 
-Only three helpers know about the geometry of the maze, and every other function
-goes through them: `_direction` (which wall stands between two cells),
-`_neighbours` (the cells one may walk to) and `linked` (is that wall open?).
+Every step delegates its geometry to the `Board` (in `mazegen/board.py`): a
+`Board` knows `neighbours` (the cells one may walk to), `linked` (is the shared
+wall open?) and `open`/`close` (change it), which themselves go through
+`move_between` in `mazegen/geometry.py` (which wall stands between two cells).
 That is why no bitmask arithmetic is ever written twice.
 
 ## Bonus
