@@ -42,4 +42,11 @@ def main(argv: list[str]) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    try:
+        sys.exit(main(sys.argv))
+    except KeyboardInterrupt:
+        # Ctrl+C outside the menu prompt -- while a large maze is being
+        # generated, saved or drawn.  Leave on a clean line and with the
+        # usual shell status for an interrupt, never on a traceback.
+        print()
+        sys.exit(130)
