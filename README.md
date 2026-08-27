@@ -83,6 +83,13 @@ Each block is first given a name — `wall`, `open`, `pattern`, `path`, `entry` 
 Naming first and colouring last is what keeps the drawing code short: the theme
 is a simple name → colour dictionary.
 
+Only cells and gaps are ever opened. The blocks at the **corners** of the canvas
+(even row *and* even column) always stay walls, even when the four gaps around
+them are open. That lone pillar is what keeps every corridor exactly one block
+wide on screen: without it, the 2x2 open areas the subject allows would melt
+into a solid 3x3 square and the drawing would read as a wide room instead of two
+crossing corridors.
+
 ## Configuration file
 
 One `KEY=VALUE` pair per line. Lines starting with `#` and blank lines are
@@ -171,9 +178,9 @@ package — a standalone module that knows nothing about the config file or the
 display. The class itself is a thin orchestrator: each step lives in its own
 file (`carve.py`, `braid.py`, `pattern.py`, `analysis.py`, `serialize.py`, over
 the shared `geometry.py` and `board.py`), so the module stays one public class
-split into one-job pieces. The `app/` package is throwaway around it:
-`app/config.py` only parses the configuration and `app/canvas.py` +
-`app/render.py` + `app/menu.py` only draw.
+split into one-job pieces. The `src/` package is throwaway around it:
+`src/config.py` only parses the configuration and `src/canvas.py` +
+`src/render.py` + `src/menu.py` only draw.
 
 The package is built as `mazegen-1.0.0-py3-none-any.whl`, available at the root
 of the repository and rebuildable with `make package` (or
@@ -239,10 +246,10 @@ maze.to_hex_rows()              # the wall map, one string per row
 | File | Role |
 | ---- | ---- |
 | `a_maze_ing.py` | Thin entry point: wires config → maze → save → display. |
-| `app/config.py` | Configuration parsing and error handling. |
-| `app/canvas.py` | Turns a maze into a grid of named blocks. |
-| `app/render.py` | Colours the blocks into terminal lines. |
-| `app/menu.py` | Interactive menu loop. |
+| `src/config.py` | Configuration parsing and error handling. |
+| `src/canvas.py` | Turns a maze into a grid of named blocks. |
+| `src/render.py` | Colours the blocks into terminal lines. |
+| `src/menu.py` | Interactive menu loop. |
 | `mazegen/__init__.py` | Public API of the reusable module and its documentation. |
 | `mazegen/geometry.py` | The vocabulary: cells, walls, moves, the "42". |
 | `mazegen/board.py` | The grid state and the wall primitives. |
