@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) 2026 mpinto-l
+Copyright (c) 2026 joamoren and mpinto-l
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,4 +26,5 @@ SOFTWARE.
 instance). The MIT License is short, well known, and explicitly allows anyone
 to **use, copy, modify, merge, publish, distribute, sublicense and sell** the
 code, including inside a closed-source project. The only obligation is to keep
-this notice, so the authorship stays visible while the reuse stays free.
+this notice, so the authorship of both authors stays visible while the
+reuse stays free.

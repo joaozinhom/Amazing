@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE.md"]
-authors = [{ name = "mpinto-l" }]
+authors = [{ name = "joamoren" }, { name = "mpinto-l" }]
 keywords = ["maze", "generator", "pacman", "42"]
 classifiers = [
     "Programming Language :: Python :: 3",

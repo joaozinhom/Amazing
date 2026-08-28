@@ -1,6 +1,4 @@
-*This project has been created as part of the 42 curriculum by mpinto-l.*
-
-<!-- Team of 2+: add your teammates above, e.g. "by mpinto-l, <login2>, <login3>". -->
+*This project has been created as part of the 42 curriculum by joamoren, mpinto-l.*
 
 # A-Maze-ing
 
@@ -296,13 +294,16 @@ hundred mazes of different sizes and seeds.
 
 ## Team and project management
 
-<!-- Fill in with your team. Roles below reflect the split we agreed on. -->
-
 | Member | Role |
 | ------ | ---- |
-| mpinto-l | Generation algorithm, reusable module and packaging |
-| `<login2>` | Configuration parsing, output format and error handling |
-| `<login3>` | Terminal display, interactions and documentation |
+| joamoren | Generation logic, designed together; first working draft of the whole project |
+| mpinto-l | Generation logic, designed together; refactoring into one-job modules, and the interactive display and menu |
+
+The two of us worked out the algorithms side by side — the carving, the braiding
+and the "42" placement were decided together. From there the work split in two
+passes: `joamoren` wrote the first end-to-end draft, and `mpinto-l` reorganised
+it into the modules the repository has today and built the interactive terminal
+interface.
 
 **Anticipated planning and how it evolved.** The plan was to build the project
 bottom-up: first the reusable generator, then the configuration and the output
