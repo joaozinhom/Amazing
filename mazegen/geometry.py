@@ -74,8 +74,9 @@ def move_between(a: Cell, b: Cell) -> Move:
 
 
 #: The "42" drawing: "1" is a fully closed cell, "0" a normal corridor.
-#: Its middle column and row stay open, keeping the centre of the maze
-#: walkable even when the pattern is centred on it.
+#: Its middle column stays open from top to bottom, so the centre cell of
+#: the pattern -- and therefore the centre of the maze it is centred on --
+#: is always a walkable corridor, as a Pac-Man board requires.
 PATTERN_42: tuple[str, ...] = (
     "100101111",
     "100100001",

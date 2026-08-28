@@ -2,9 +2,9 @@
 """A-Maze-ing: read a configuration file, build a maze, save and show it.
 
 This is the thin entry point.  It only wires the pieces together: parse
-the configuration (:mod:`app.config`), build the maze (:mod:`mazegen`),
+the configuration (:mod:`src.config`), build the maze (:mod:`mazegen`),
 write it to the output file, and hand it to the interactive display
-(:mod:`app.menu`).
+(:mod:`src.menu`).
 
 Usage:
     python3 ./a_maze_ing.py config.txt
@@ -14,8 +14,8 @@ from __future__ import annotations
 
 import sys
 
-from app import menu
-from app.config import ConfigError, build_maze, read_config
+from src import menu
+from src.config import ConfigError, build_maze, read_config
 
 
 def main(argv: list[str]) -> int:
@@ -42,4 +42,11 @@ def main(argv: list[str]) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    try:
+        sys.exit(main(sys.argv))
+    except KeyboardInterrupt:
+        # Ctrl+C outside the menu prompt -- while a large maze is being
+        # generated, saved or drawn.  Leave on a clean line and with the
+        # usual shell status for an interrupt, never on a traceback.
+        print()
+        sys.exit(130)

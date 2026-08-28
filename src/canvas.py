@@ -12,8 +12,15 @@ called blocks::
     +---+---+           wall  wall  wall  wall  wall
 
 Each block is given a name -- ``wall``, ``open``, ``pattern``, ``path``,
-``entry`` or ``exit`` -- which :mod:`app.render` later turns into a
+``entry`` or ``exit`` -- which :mod:`src.render` later turns into a
 colour.
+
+Only cells and gaps are ever opened.  The blocks sitting at the *corners*
+of the grid -- even row and even column -- always stay walls, even when
+the four gaps around them are open.  That lone pillar is what keeps a
+corridor exactly one block wide on screen: without it, the 2x2 open areas
+the subject allows would melt into a 3x3 square and the drawing would
+read as a wide room rather than as two crossing corridors.
 """
 
 from __future__ import annotations
@@ -70,20 +77,6 @@ def _draw_pattern(maze: MazeGenerator, canvas: list[list[str]]) -> None:
             _fill(canvas, _gap(cell, corner), "pattern")   # a full 2x2 square
 
 
-def _open_corners(canvas: list[list[str]]) -> None:
-    """Open the wall blocks standing alone between four open ones.
-
-    Those blocks are the corners of the grid, and a corner whose four
-    sides are open is a pillar in the middle of nothing.
-    """
-    for y in range(2, len(canvas) - 1, 2):
-        for x in range(2, len(canvas[0]) - 1, 2):
-            around = (canvas[y - 1][x], canvas[y + 1][x],
-                      canvas[y][x - 1], canvas[y][x + 1])
-            if all(block == "open" for block in around):
-                _fill(canvas, Cell(x, y), "open")
-
-
 def _draw_path(canvas: list[list[str]], path: list[Cell]) -> None:
     """Walk the solution, painting every cell and every gap it crosses."""
     for a, b in zip(path, path[1:]):
@@ -98,7 +91,6 @@ def build_canvas(maze: MazeGenerator, path: list[Cell]) -> list[list[str]]:
     canvas = [["wall"] * cols for _ in range(rows)]
     _draw_corridors(maze, canvas)
     _draw_pattern(maze, canvas)
-    _open_corners(canvas)
     _draw_path(canvas, path)
     _fill(canvas, _block(maze.entry), "entry")
     _fill(canvas, _block(maze.exit), "exit")

@@ -1,6 +1,6 @@
 """Colouring the named blocks and turning them into terminal lines.
 
-Each block name from :mod:`app.canvas` stands for a colour; a block is
+Each block name from :mod:`src.canvas` stands for a colour; a block is
 printed as two spaces of that colour's background.  The wall, "42" and
 path colours come from a rotating theme, so the menu can recolour the
 maze on demand.

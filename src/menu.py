@@ -1,6 +1,6 @@
 """The interactive terminal menu.
 
-Draws the maze with :mod:`app.render`, then loops over the user's
+Draws the maze with :mod:`src.render`, then loops over the user's
 choices: re-generate, show or hide the shortest path, rotate the wall
 colours, or quit.  When the output is piped (not a terminal) it simply
 draws once and returns.
