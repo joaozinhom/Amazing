@@ -336,12 +336,6 @@ and a generation animation would be natural next steps.
 ### How AI was used
 
 AI (Claude) was used as a coding assistant on this project, mainly to:
-
-* turn the subject into an explicit checklist of rules to satisfy, and discuss
-  the trade-offs between generation algorithms before choosing one;
-* write a first version of the generation, display and packaging code, which we
-  then read, questioned and reworked — the "42" pattern in particular was
-  redesigned by hand after the audit showed it forced dead-ends;
 * write the audit script that checks every rule of the subject (wall coherence,
   connectivity, corridor width, loops, dead-ends, output format) on hundreds of
   random mazes.
